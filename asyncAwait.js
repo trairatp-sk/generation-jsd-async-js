@@ -11,11 +11,11 @@ function onFail(rejectedValue) {
 function shower() {
   return new Promise((resolve, reject) => {
     console.log('Start showering');
+    reject('No soap');
     setTimeout(() => {
       // console.log('Finish showering');
       resolve('Finish showering');
-    }, 500);
-    console.log('Start showering 2');
+    }, 5000);
   });
 }
 
@@ -25,7 +25,7 @@ function brushTeeth() {
     setTimeout(() => {
       // console.log('Finish brushing teeth');
       resolve('Finish brushing teeth');
-    }, 200);
+    }, 2000);
   });
 }
 
@@ -49,11 +49,6 @@ function getDress() {
   });
 }
 
-new Promise((resolve, reject) => {
-  console.log('Hi');
-  resolve(true);
-});
-
 // const showerPromise = shower();
 // console.log('wake up');
 // showerPromise.then((value) => {
@@ -74,37 +69,10 @@ wake up
 finish showering
 */
 
-const promises = [shower(), brushTeeth()];
-Promise.all(promises)
-  .then(function (resolvedValues) {
-    console.log(resolvedValues);
-  })
-  .then(function (resolvedValue) {
-    console.log(resolvedValue);
-    return eatBreakfast();
-  })
-  .then(function (resolvedValue) {
-    console.log(resolvedValue);
-    return getDress();
-  })
-  .then(function (resolvedValue) {
-    console.log(resolvedValue);
-    return 'All done. I am ready to go to work';
-  })
-  .then(function (resolvedValue) {
-    console.log(resolvedValue);
-  })
-  .catch(onFail);
-
-// const showerPromise = shower();
-
-// console.log(showerPromise);
-// console.log('typeof shower() = ', typeof showerPromise);
-
-// showerPromise
-//   .then(function (resolvedValue) {
-//     console.log(resolvedValue);
-//     return brushTeeth();
+// const promises = [shower(), brushTeeth()];
+// Promise.all(promises)
+//   .then(function (resolvedValues) {
+//     console.log(resolvedValues);
 //   })
 //   .then(function (resolvedValue) {
 //     console.log(resolvedValue);
@@ -123,27 +91,65 @@ Promise.all(promises)
 //   })
 //   .catch(onFail);
 
-// let x;
+async function morningRoutine() {
+  // const showerResult = await shower();
+  // const brushTeethResult = await brushTeeth();
+  // console.log(brushTeethResult);
+  try {
+    const [showerResult, brushTeethResult] = await Promise.all([shower(), brushTeeth()]);
+    console.log(showerResult);
+    console.log(brushTeethResult);
+    const eatBreakfastResult = await eatBreakfast();
+    console.log(eatBreakfastResult);
+    const getDressResult = await getDress();
+    console.log(getDressResult);
+  } catch (e) {
+    console.log('Something bad happened in the morning');
+    onFail(e);
+  }
+  return 'Finish morning routine';
+}
 
-// new Promise((resolve, reject) => {
-//   resolve(10);
-// })
-//   .then(function (a) {
-//     console.log(`a = ${a}`);
-//     return a + 2;
-//   })
-//   .then(function (b) {
-//     console.log(`b = ${b}`);
-//     x = b;
-//     return b * 3;
-//   })
-//   .then(function (c) {
-//     console.log(`c = ${c}`);
-//     return c + 5;
-//   })
-//   .then(function (d) {
-//     console.log(`d = ${d}`);
-//     console.log(`x = ${x}`);
-//   });
+// console.log('wake up');
+// const morningResult = morningRoutine();
+// console.log(morningResult);
 
-// console.log(`outside x = ${x}`);
+// async function myDay() {
+//   try {
+//     const morningResult = await morningRoutine();
+//     console.log(morningResult);
+//   } catch (e) {
+//     console.log('Something bad happened in the my day');
+//     onFail(e);
+//   }
+//   // await eveningRoutine();
+// }
+// myDay();
+
+function add(x, y) {
+  if (typeof x !== 'number' || typeof y !== 'number') {
+    // do something ให้คนใช้รู้
+    throw new Error('Input is not a number');
+  }
+  return x + y;
+}
+
+try {
+  console.log(add({}, null));
+} catch (e) {
+  console.error(e);
+}
+
+// function run() {
+//   console.log('Before try...catch');
+//   try {
+//     console.log('Hello world');
+//     throw 'Something bad happened';
+//     console.log('Hi Generation');
+//   } catch (error) {
+//     console.log('After try...catch');
+//     console.log(error);
+//   }
+// }
+
+// run();
